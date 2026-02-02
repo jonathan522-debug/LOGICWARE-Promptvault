@@ -81,6 +81,9 @@ class AiChatController extends Controller
             } elseif (str_contains($e->getMessage(), 'servidor')) {
                 $statusCode = 502;
                 $message = 'El servicio de IA no está disponible. Intenta más tarde.';
+            } elseif (str_contains(strtolower($e->getMessage()), 'time') || str_contains($e->getMessage(), 'cURL error 28')) {
+                $statusCode = 504;
+                $message = 'La IA tardó demasiado en responder. Intenta con una solicitud más breve.';
             }
 
             return response()->json([

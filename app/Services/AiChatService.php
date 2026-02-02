@@ -51,7 +51,9 @@ class AiChatService
         try {
             // Llamar a OpenAI Completions API (no es Responses, usamos Messages/Chat)
             // withoutVerifying() evita errores de certificado SSL en local
-            $response = Http::withoutVerifying()->withHeaders([
+            $response = Http::withoutVerifying()
+                ->timeout(120) // Aumentar tiempo de espera a 120 segundos para respuestas largas
+                ->withHeaders([
                 'Authorization' => 'Bearer ' . $this->apiKey,
                 'Content-Type' => 'application/json',
             ])->post($this->baseUrl . '/chat/completions', [

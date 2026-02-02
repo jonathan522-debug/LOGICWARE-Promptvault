@@ -725,6 +725,6 @@
     </script>
 
     <!-- AI Chat Widget -->
-    @include('components.ai-widget-injection')
+    @include('components.ai-chat-widget')
 </body>
 </html>
