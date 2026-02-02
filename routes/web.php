@@ -25,7 +25,7 @@ use App\Http\Middleware\CheckAdmin;
 | La página principal SIEMPRE será el welcome-dashboard (modo lectura).
 | Se verá tanto invitado como logeado.
 */
-Route::get('/', [WelcomeDashboardController::class, 'index'])
+Route::get('/', [PromptDashboardController::class, 'index'])->middleware('auth')
     ->name('welcome');
 
 /*

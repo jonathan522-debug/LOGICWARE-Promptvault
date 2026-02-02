@@ -357,33 +357,81 @@
             margin-bottom: 20px;
         }
 
-        /* Pagination */
+        /* Pagination - Updated */
         .pagination {
             display: flex;
             justify-content: center;
+            align-items: center;
             gap: 8px;
             margin-top: 40px;
+            flex-wrap: wrap;
         }
 
-        .pagination a,
-        .pagination span {
+        .pagination > * {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pagination .pagination-list {
+            display: flex;
+            gap: 4px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pagination .page-item {
+            display: inline-block;
+        }
+
+        .pagination .page-link,
+        .pagination .page-item span:not(.sr-only) {
             padding: 8px 12px;
             border: 1px solid rgba(100, 116, 139, 0.3);
             border-radius: 6px;
             color: #94a3b8;
             text-decoration: none;
             transition: all 0.3s ease;
+            display: inline-block;
+            min-width: 40px;
+            text-align: center;
+            font-size: 14px;
         }
 
-        .pagination a:hover {
+        .pagination .page-link:hover {
             border-color: #667eea;
             color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
         }
 
-        .pagination .active span {
-            background: #667eea;
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-color: #667eea;
             color: white;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            opacity: 0.5;
+            cursor: not-allowed;
+            color: #64748b;
+        }
+
+        .pagination .page-item.disabled .page-link:hover {
+            border-color: rgba(100, 116, 139, 0.3);
+            color: #64748b;
+            background: transparent;
+        }
+
+        /* Pagination info */
+        .pagination-info {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 10px;
+            width: 100%;
         }
 
         /* Responsive */
@@ -413,6 +461,25 @@
 
             .search-input {
                 min-width: 100%;
+            }
+
+            .pagination {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .pagination > * {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .pagination .pagination-list {
+                order: 2;
+            }
+
+            .pagination-info {
+                order: 1;
+                margin-top: 0;
             }
         }
     </style>
@@ -514,9 +581,54 @@
                     </div>
 
                     <!-- Pagination -->
+                    @if($promptsDelSistema->hasPages())
                     <div class="pagination">
-                        {{ $promptsDelSistema->links() }}
+                        <!-- Pagination Info -->
+                        <div class="pagination-info">
+                            Mostrando {{ $promptsDelSistema->firstItem() }} a {{ $promptsDelSistema->lastItem() }} de {{ $promptsDelSistema->total() }} resultados
+                        </div>
+                        
+                        <!-- Pagination Links -->
+                        <div>
+                            <ul class="pagination-list">
+                                {{-- Previous Page Link --}}
+                                @if($promptsDelSistema->onFirstPage())
+                                    <li class="page-item disabled">
+                                        <span class="page-link">&laquo; Anterior</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $promptsDelSistema->previousPageUrl() }}" rel="prev">&laquo; Anterior</a>
+                                    </li>
+                                @endif
+
+                                {{-- Pagination Elements --}}
+                                @foreach(range(1, $promptsDelSistema->lastPage()) as $page)
+                                    @if($page == $promptsDelSistema->currentPage())
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ $page }}</span>
+                                        </li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $promptsDelSistema->url($page) }}">{{ $page }}</a>
+                                        </li>
+                                    @endif
+                                @endforeach
+
+                                {{-- Next Page Link --}}
+                                @if($promptsDelSistema->hasMorePages())
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $promptsDelSistema->nextPageUrl() }}" rel="next">Siguiente &raquo;</a>
+                                    </li>
+                                @else
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Siguiente &raquo;</span>
+                                    </li>
+                                @endif
+                            </ul>
+                        </div>
                     </div>
+                    @endif
                 @else
                     <div class="empty-state">
                         <div class="empty-icon">📭</div>
